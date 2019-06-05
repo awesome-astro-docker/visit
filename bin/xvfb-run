@@ -135,34 +135,35 @@ if [ -z "$*" ]; then
     exit 2
 fi
 
-if ! which xauth >/dev/null; then
-    error "xauth command not found"
-    exit 3
-fi
+# if ! which xauth >/dev/null; then
+#     error "xauth command not found"
+#     exit 3
+# fi
 
 # tidy up after ourselves
 trap clean_up EXIT
 
-# If the user did not specify an X authorization file to use, set up a temporary
-# directory to house one.
-if [ -z "$AUTHFILE" ]; then
-    XVFB_RUN_TMPDIR="$(mktemp -d -t $PROGNAME.XXXXXX)"
-    # Create empty file to avoid xauth warning
-    AUTHFILE=$(tempfile -n "$XVFB_RUN_TMPDIR/Xauthority")
-fi
+# # If the user did not specify an X authorization file to use, set up a temporary
+# # directory to house one.
+# if [ -z "$AUTHFILE" ]; then
+#     XVFB_RUN_TMPDIR="$(mktemp -d -t $PROGNAME.XXXXXX)"
+#     # Create empty file to avoid xauth warning
+#     AUTHFILE=$(tempfile -n "$XVFB_RUN_TMPDIR/Xauthority")
+# fi
 
 # Start Xvfb.
-MCOOKIE=$(mcookie)
+##MCOOKIE=$(mcookie)
 tries=10
 while [ $tries -gt 0 ]; do
     tries=$(( $tries - 1 ))
-    XAUTHORITY=$AUTHFILE xauth source - << EOF >>"$ERRORFILE" 2>&1
-add :$SERVERNUM $XAUTHPROTO $MCOOKIE
-EOF
+    ##XAUTHORITY=$AUTHFILE xauth source - << EOF >>"$ERRORFILE" 2>&1
+##add :$SERVERNUM $XAUTHPROTO $MCOOKIE
+##EOF
     # handle SIGUSR1 so Xvfb knows to send a signal when it's ready to accept
     # connections
     trap : USR1
-    (trap '' USR1; exec Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP -auth $AUTHFILE >>"$ERRORFILE" 2>&1) &
+    #(trap '' USR1; exec Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP -auth $AUTHFILE >>"$ERRORFILE" 2>&1) &
+    (trap '' USR1; exec Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >>"$ERRORFILE" 2>&1) &
     XVFBPID=$!
 
     wait || :
@@ -181,7 +182,8 @@ done
 
 # Start the command and save its exit status.
 set +e
-DISPLAY=:$SERVERNUM XAUTHORITY=$AUTHFILE "$@" 2>&1
+#DISPLAY=:$SERVERNUM XAUTHORITY=$AUTHFILE "$@" 2>&1
+DISPLAY=:$SERVERNUM "$@"
 RETVAL=$?
 set -e
 
