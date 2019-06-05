@@ -1,32 +1,25 @@
 #! /bin/bash
 
->&2 echo "Visit wrapper script on hostname $(hostname)"
->&2 echo "DISPLAY is $DISPLAY"
->&2 echo "XAUTHORITY is $XAUTHORITY"
+WRAPDIR=/home/dlang/visit
 
+#>&2 echo "Visit wrapper script on hostname $(hostname)"
+
+# VisIt sets a -dir argument that is wrong; override it.
 atargs="$@"
->&2 echo atargs: $atargs
-subargs=$(echo $atargs | sed s+/home/dlang/visit+/visit/visit3_0_0.linux-x86_64+g)
->&2 echo subargs: $subargs
+subargs=$(echo $atargs | sed s+$WRAPDIR+/visit/visit3_0_0.linux-x86_64+g)
 
+#>&2 echo atargs: $atargs
+#>&2 echo subargs: $subargs
+
+# Are we inside the container?  If so, launch the wrapped script
 if [ $(hostname) == sing ]; then
     #>&2 echo "Running within the container."
     /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
     exit $?
 fi
 
-#source /etc/profile.d/modules.sh
 module load singularity
 
->&2 echo "I am the /home/dlang/visit/bin/visit wrapper script"
-#>&2 echo 0: "$0"
-#>&2 echo @: "$@"
+#>&2 echo "I am the /home/dlang/visit/bin/visit wrapper script"
+$WRAPDIR/bin/xvfb-run -a -s "-screen 0 1024x768x24" singularity exec --hostname sing /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
 
-#/usr/bin/Xvfb :16 -screen 0 1024x768x24 &
-#export DISPLAY=:16
-#singularity exec --hostname sing /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
-#kill %
-
-#xvfb-run -l -a -s "-screen 0 1024x768x24" singularity exec --hostname sing /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
-
-/home/dlang/visit/bin/xvfb-run -a -s "-screen 0 1024x768x24" singularity exec --hostname sing /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
