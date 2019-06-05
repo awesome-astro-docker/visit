@@ -18,4 +18,7 @@ singularity build -F /cm/shared/apps/visit/3.0.0/visit-3.0.0.sif docker:awesomea
 
 # Set up VisIt client side:
 
-/cm/shared/apps/visit/3.0.0
+Edit host_symmetry.xml, changing "YOUR-USERNAME" to your username (on the server).
+Copy into ~/.visit/hosts
+
+
