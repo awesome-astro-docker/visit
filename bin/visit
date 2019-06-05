@@ -1,6 +1,6 @@
 #! /bin/bash
 
-WRAPDIR=/home/dlang/visit
+WRAPDIR=/cm/shared/apps/visit/3.0.0
 
 #>&2 echo "Visit wrapper script on hostname $(hostname)"
 
@@ -11,7 +11,7 @@ subargs=$(echo $atargs | sed s+$WRAPDIR+/visit/visit3_0_0.linux-x86_64+g)
 #>&2 echo atargs: $atargs
 #>&2 echo subargs: $subargs
 
-# Are we inside the container?  If so, launch the wrapped script
+# Are we inside the container?  If so, just run the real visit script
 if [ $(hostname) == sing ]; then
     #>&2 echo "Running within the container."
     /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
@@ -19,7 +19,4 @@ if [ $(hostname) == sing ]; then
 fi
 
 module load singularity
-
-#>&2 echo "I am the /home/dlang/visit/bin/visit wrapper script"
-$WRAPDIR/bin/xvfb-run -a -s "-screen 0 1024x768x24" singularity exec --hostname sing /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
-
+$WRAPDIR/bin/xvfb-run -a -s "-screen 0 1024x768x24" singularity exec --hostname sing $WRAPDIR/visit-3.0.0.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
