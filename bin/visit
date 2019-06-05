@@ -1,0 +1,29 @@
+#! /bin/bash
+
+>&2 echo "Visit wrapper script on hostname $(hostname)"
+
+atargs="$@"
+>&2 echo atargs: $atargs
+subargs=$(echo $atargs | sed s+/home/dlang/visit+/visit/visit3_0_0.linux-x86_64+g)
+>&2 echo subargs: $subargs
+
+if [ $(hostname) == sing ]; then
+    >&2 echo "Running within the container."
+    /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
+    exit $?
+fi
+
+source /etc/profile.d/modules.sh
+module load singularity
+
+>&2 echo "I am the /home/dlang/visit/bin/visit wrapper script"
+>&2 echo 0: "$0"
+>&2 echo @: "$@"
+
+/usr/bin/Xvfb :16 -screen 0 1024x768x24 &
+export DISPLAY=:16
+
+#singularity exec /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit "$@"
+singularity exec --hostname sing /gpfs/dlang/visit-dev3.sif /visit/visit3_0_0.linux-x86_64/bin/visit $subargs
+
+kill %
