@@ -10,9 +10,4 @@ RUN yum install -y mesa-libGLU libpng harfbuzz libicu fontconfig libXi libSM lib
 ENV LD_LIBRARY_PATH /lib64:/visit/visit3_0_0.linux-x86_64/3.0.0/linux-x86_64/lib
 ENV PATH $PATH:/visit/visit3_0_0.linux-x86_64/3.0.0/linux-x86_64/bin:/visit/visit3_0_0.linux-x86_64/bin
 
-#COPY visit.sh /visit/visit3_0_0.linux-x86_64/bin/visit
-#RUN chmod 755 /visit/visit3_0_0.linux-x86_64/bin/visit
-#COPY frontendlauncher.py /visit/visit3_0_0.linux-x86_64/bin/
-#COPY internallauncher /visit/visit3_0_0.linux-x86_64/3.0.0/bin/
-
 RUN rm /visit/visit3_0_0.linux-x86_64/3.0.0/linux-x86_64/lib/osmesa/*
